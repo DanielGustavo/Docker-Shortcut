@@ -15,6 +15,7 @@
 - [Features Examples](#features-examples)
   - [Open shell with custom startup command](#open-shell-with-custom-startup-command)
   - [Group containers](#group-containers)
+- [License](#license)
 - [Author](#author)
 
 <!--te-->
@@ -46,6 +47,9 @@
 ## Group containers
 
 ![DockerShortcutGroupContainers](./docs/groupContainers.gif)
+
+# License
+Licensed under the [GNU General Public License Version 3](./LICENSE).
 
 # Author
 
