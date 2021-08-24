@@ -1,0 +1,19 @@
+.stopped-status {
+  color: #f8625e;
+}
+
+.started-status {
+  color: #34c749;
+}
+
+.paused-status {
+  color: #f7bb3f;
+}
+
+.popup-menu-item {
+  min-width: 320px;
+}
+
+.input {
+  width: 250px;
+}

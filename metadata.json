@@ -1,0 +1,8 @@
+{
+  "name": "Docker Shortcut",
+  "description": "Docker containers manager",
+  "uuid": "dockershortcut@danielgustavo5205.gmail.com",
+  "shell-version": [
+    "3.36"
+  ]
+}
