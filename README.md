@@ -12,6 +12,7 @@
 
 - [Docker Shortcut Screenshot](#docker-shortcut-screenshot)
 - [Features](#features)
+- [Installation](#installation)
 - [Features Examples](#features-examples)
   - [Open shell with custom startup command](#open-shell-with-custom-startup-command)
   - [Group containers](#group-containers)
@@ -37,6 +38,10 @@
   - [Set a command to be executed when opening the container shell](#open-shell-with-custom-startup-command)
 - [Group containers](#group-containers) by **_prefix__**
 <!--te-->
+
+# Installation
+
+You can install Docker Shortcut in [GNOME shell extensions](https://extensions.gnome.org/extension/4460/docker-shortcut/)
 
 # Features examples
 
