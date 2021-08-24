@@ -19,7 +19,6 @@ var ConfirmationModal = class ConfirmationModal extends Modal {
         callback();
         this.close();
       },
-      default: true,
     });
   }
 
