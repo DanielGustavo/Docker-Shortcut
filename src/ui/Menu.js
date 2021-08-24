@@ -11,6 +11,10 @@ var Menu = class Menu extends MenuComponent {
     super._init();
 
     this.page = 'default';
+
+    notifier.on('containerChange', () => {
+      this.refreshMenu();
+    });
   }
 
   renderMenu() {
@@ -23,10 +27,6 @@ var Menu = class Menu extends MenuComponent {
     } else {
       this.addText('Loading...');
     }
-
-    notifier.on('containerChange', () => {
-      this.refreshMenu();
-    });
   }
 
   changePage(page) {
