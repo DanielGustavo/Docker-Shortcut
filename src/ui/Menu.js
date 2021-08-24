@@ -38,11 +38,11 @@ var Menu = class Menu extends MenuComponent {
     this.addText('Groups');
 
     const containersWithoutGroup = docker.loadContainersWithoutGroup();
-    const containersGroupsPrefixes = Object.keys(this.containersGroups);
+    const containersGroupsNames = Object.keys(this.containersGroups);
 
-    containersGroupsPrefixes.forEach((prefix) => {
-      this.addButton(prefix, () => {
-        this.changePage(prefix);
+    containersGroupsNames.forEach((groupName) => {
+      this.addButton(groupName, () => {
+        this.changePage(groupName);
       });
     });
 
