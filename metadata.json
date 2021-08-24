@@ -4,5 +4,7 @@
   "uuid": "dockershortcut@danielgustavo5205.gmail.com",
   "shell-version": [
     "3.36"
-  ]
+  ],
+  "version": 1,
+  "url": "https://github.com/DanielGustavo/Docker-Shortcut"
 }
