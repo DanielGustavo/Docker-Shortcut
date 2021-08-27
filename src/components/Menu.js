@@ -34,6 +34,10 @@ var Menu = class Menu extends PanelMenu.Button {
     }
   }
 
+  removeElements() {
+    this.menu.removeAll();
+  }
+
   renderMenu() {
     this.addText('Menu...');
   }
