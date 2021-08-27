@@ -33,39 +33,37 @@ class DockerHelper {
   }
 
   loadContainers() {
-    const { out, status } = shell.execSync(
-      "docker ps -a --format '{{.ID}},{{.Names}},{{.Status}}'"
-    );
+    return new Promise((resolve) => {
+      shell.execAsync(
+        "docker ps -a --format '{{.ID}},{{.Names}},{{.Status}}'",
+        (output) => {
+          const containers = output.trim().split('\n');
 
-    if (status !== 0) {
-      throw new Error('Loading the containers was not possible');
-    }
+          const containersDatas = containers.map((container) => {
+            const [id, name, containerFullStatus] = container.split(',');
 
-    const containers = out.trim().split('\n');
+            const isPaused =
+              containerFullStatus.toLowerCase().indexOf('paused') > -1;
+            const isUp = containerFullStatus.toLowerCase().indexOf('up') > -1;
 
-    const containersDatas = containers.map((container) => {
-      const [id, name, containerFullStatus] = container.split(',');
+            let containerStatus = 'stopped';
 
-      const isPaused = containerFullStatus.toLowerCase().indexOf('paused') > -1;
-      const isUp = containerFullStatus.toLowerCase().indexOf('up') > -1;
+            if (isPaused) {
+              containerStatus = 'paused';
+            } else if (isUp) {
+              containerStatus = 'started';
+            }
 
-      let containerStatus = 'stopped';
+            return { id, name, status: containerStatus };
+          });
 
-      if (isPaused) {
-        containerStatus = 'paused';
-      } else if (isUp) {
-        containerStatus = 'started';
-      }
-
-      return { id, name, status: containerStatus };
+          resolve(containersDatas);
+        }
+      );
     });
-
-    return containersDatas;
   }
 
-  loadContainersGroups() {
-    const containers = this.loadContainers();
-
+  _separateContainersIntoGroups(containers) {
     const containersPrefixes = new Set();
 
     containers.forEach((container) => {
@@ -92,19 +90,30 @@ class DockerHelper {
     return containersGroups;
   }
 
-  loadContainersWithoutGroup() {
-    const containers = this.loadContainers();
-    const containersGroups = this.loadContainersGroups();
+  async loadContainersGroups() {
+    const containers = await this.loadContainers();
 
-    const containersGroupsPrefixes = Object.keys(containersGroups);
-
-    const containersWithoutGroup = containers.filter((container) => {
-      const containerPrefix = container.name.split('_')[0];
-
-      return !containersGroupsPrefixes.includes(containerPrefix);
+    return new Promise((resolve) => {
+      const containersGroups = this._separateContainersIntoGroups(containers);
+      resolve(containersGroups);
     });
+  }
 
-    return containersWithoutGroup;
+  async loadContainersWithoutGroup() {
+    const containers = await this.loadContainers();
+
+    return new Promise((resolve) => {
+      const containersGroups = this._separateContainersIntoGroups(containers);
+
+      const containersGroupsPrefixes = Object.keys(containersGroups);
+
+      const containersWithoutGroup = containers.filter((container) => {
+        const containerPrefix = container.name.split('_')[0];
+        return !containersGroupsPrefixes.includes(containerPrefix);
+      });
+
+      resolve(containersWithoutGroup);
+    });
   }
 
   _notifyChange() {
