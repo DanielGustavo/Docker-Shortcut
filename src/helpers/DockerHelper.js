@@ -3,6 +3,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { shell } = Me.imports.src.helpers.ShellHelper;
 const { notifier } = Me.imports.src.helpers.NotificationHelper;
 const { file } = Me.imports.src.helpers.FileHelper;
+const { getSettings } = Me.imports.src.utils.getSettings;
+
+const settings = getSettings();
 
 class DockerHelper {
   constructor() {
@@ -63,13 +66,18 @@ class DockerHelper {
     return containersDatas;
   }
 
+  getContainersPrefixSeparator() {
+    return settings.get_string('containers-prefix-separator') || '_';
+  }
+
   loadContainersGroups() {
+    const containersPrefixSeparator = this.getContainersPrefixSeparator();
     const containers = this.loadContainers();
 
     const containersPrefixes = new Set();
 
     containers.forEach((container) => {
-      const prefix = container.name.split('_')[0];
+      const prefix = container.name.split(containersPrefixSeparator)[0];
 
       if (prefix) {
         containersPrefixes.add(prefix);
@@ -80,7 +88,10 @@ class DockerHelper {
 
     containersPrefixes.forEach((prefix) => {
       const containersMatchingPrefix = containers.filter((container) => {
-        const currentContainerPrefix = container.name.split('_')[0];
+        const currentContainerPrefix = container.name.split(
+          containersPrefixSeparator
+        )[0];
+
         return currentContainerPrefix === prefix;
       });
 
@@ -93,13 +104,17 @@ class DockerHelper {
   }
 
   loadContainersWithoutGroup() {
+    const containersPrefixSeparator = this.getContainersPrefixSeparator();
+
     const containers = this.loadContainers();
     const containersGroups = this.loadContainersGroups();
 
     const containersGroupsPrefixes = Object.keys(containersGroups);
 
     const containersWithoutGroup = containers.filter((container) => {
-      const containerPrefix = container.name.split('_')[0];
+      const containerPrefix = container.name.split(
+        containersPrefixSeparator
+      )[0];
 
       return !containersGroupsPrefixes.includes(containerPrefix);
     });
