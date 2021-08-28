@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schemalist>
+  <schema
+    id="org.gnome.shell.extensions.dockershortcut"
+    path="/org/gnome/shell/extensions/dockershortcut/"
+  >
+
+    <key type="s" name="containers-prefix-separator">
+      <default>"_"</default>
+      <summary>summary</summary>
+      <description>description</description>
+    </key>
+
+  </schema>
+</schemalist>
