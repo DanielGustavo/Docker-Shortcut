@@ -8,8 +8,6 @@ class FileHelper {
       .replace(/"/g, '\\"')
       .replace(/\\\\"/g, '\\\\\\"');
 
-    log(parsedContent);
-
     shell.execAsync(`/bin/sh -c "echo '${parsedContent}' > ${filename}"`);
   }
 

@@ -3,6 +3,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { shell } = Me.imports.src.helpers.ShellHelper;
 const { notifier } = Me.imports.src.helpers.NotificationHelper;
 const { file } = Me.imports.src.helpers.FileHelper;
+const { getSettings } = Me.imports.src.utils.getSettings;
+
+const settings = getSettings();
 
 class DockerHelper {
   constructor() {
@@ -63,11 +66,16 @@ class DockerHelper {
     });
   }
 
+  getContainersPrefixSeparator() {
+    return settings.get_string('containers-prefix-separator') || '_';
+  }
+
   _separateContainersIntoGroups(containers) {
+    const containersPrefixSeparator = this.getContainersPrefixSeparator();
     const containersPrefixes = new Set();
 
     containers.forEach((container) => {
-      const prefix = container.name.split('_')[0];
+      const prefix = container.name.split(containersPrefixSeparator)[0];
 
       if (prefix) {
         containersPrefixes.add(prefix);
@@ -78,7 +86,10 @@ class DockerHelper {
 
     containersPrefixes.forEach((prefix) => {
       const containersMatchingPrefix = containers.filter((container) => {
-        const currentContainerPrefix = container.name.split('_')[0];
+        const currentContainerPrefix = container.name.split(
+          containersPrefixSeparator
+        )[0];
+
         return currentContainerPrefix === prefix;
       });
 
@@ -100,6 +111,7 @@ class DockerHelper {
   }
 
   async loadContainersWithoutGroup() {
+    const containersPrefixSeparator = this.getContainersPrefixSeparator();
     const containers = await this.loadContainers();
 
     return new Promise((resolve) => {
@@ -108,7 +120,10 @@ class DockerHelper {
       const containersGroupsPrefixes = Object.keys(containersGroups);
 
       const containersWithoutGroup = containers.filter((container) => {
-        const containerPrefix = container.name.split('_')[0];
+        const containerPrefix = container.name.split(
+          containersPrefixSeparator
+        )[0];
+
         return !containersGroupsPrefixes.includes(containerPrefix);
       });
 

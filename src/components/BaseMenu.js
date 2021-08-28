@@ -12,13 +12,7 @@ var BaseMenu = class BaseMenu {
     return text;
   }
 
-  addButton(
-    title = 'Button',
-    onClick = () => {
-      log('clicked');
-    },
-    styleClasses = []
-  ) {
+  addButton(title = 'Button', onClick = () => {}, styleClasses = []) {
     const button = new PopupMenu.PopupMenuItem(title, {
       style_class: `menu-button ${styleClasses.join(' ')}`,
     });
@@ -41,9 +35,7 @@ var BaseMenu = class BaseMenu {
     styleClasses = [],
     placeholder = 'Placeholder',
     value,
-    onChange = (inputValue) => {
-      log(inputValue);
-    },
+    onChange = (inputValue) => {},
   }) {
     const input = new St.Entry({
       name,

@@ -1,8 +1,8 @@
 <h2 style="font-size: 1.5em;" align="center">
 
-  ![DockerShortcutLogo](./docs/icon.png)
+![DockerShortcutLogo](./docs/icon.png)
 
-  Gnome shell extension to manage Docker containers
+Gnome shell extension to manage Docker containers
 
 </h2>
 
@@ -21,7 +21,6 @@
 
 <!--te-->
 
-
 # Docker Shortcut Screenshot
 
 ![DockerShortcutScreenshot](./docs/screenshot.png)
@@ -29,6 +28,7 @@
 # Features
 
 <!--ts-->
+
 - Start/Stop containers
 - Pause/Unpause containers
 - Restart containers
@@ -36,8 +36,9 @@
 - View containers logs
 - Open containers shell
   - [Set a command to be executed when opening the container shell](#open-shell-with-custom-startup-command)
-- [Group containers](#group-containers) by **_prefix__**
-<!--te-->
+- [Group containers](#group-containers) by **prefix\_**
+  - You can change the prefix separator **(which currently is "\_")** in the Docker Shortcut settings
+  <!--te-->
 
 # Installation
 
@@ -54,6 +55,7 @@ You can install Docker Shortcut in [GNOME shell extensions](https://extensions.g
 ![DockerShortcutGroupContainers](./docs/groupContainers.gif)
 
 # License
+
 Licensed under the [GNU General Public License Version 3](./LICENSE).
 
 # Author
