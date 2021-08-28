@@ -34,63 +34,61 @@ class ShellHelper {
     });
   }
 
-  execAsync(command, callback) {
-    try {
-      if (!callback) {
-        GLib.spawn_command_line_async(command);
-        return;
-      }
+  execAsync(command) {
+    return new Promise((resolve, reject) => {
+      try {
+        const [, pid, stdin, stdout, stderr] = GLib.spawn_async_with_pipes(
+          null,
+          ['/bin/sh', '-c', `${command}`],
+          null,
+          GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+          null
+        );
 
-      const [, pid, stdin, stdout, stderr] = GLib.spawn_async_with_pipes(
-        null,
-        ['/bin/sh', '-c', `${command}`],
-        null,
-        GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-        null
-      );
+        GLib.close(stdin);
 
-      GLib.close(stdin);
+        const stdoutStream = new Gio.DataInputStream({
+          base_stream: new Gio.UnixInputStream({
+            fd: stdout,
+            close_fd: true,
+          }),
+          close_base_stream: true,
+        });
 
-      const stdoutStream = new Gio.DataInputStream({
-        base_stream: new Gio.UnixInputStream({
-          fd: stdout,
-          close_fd: true,
-        }),
-        close_base_stream: true,
-      });
+        const stdoutLines = [];
+        this._readOutput(stdoutStream, stdoutLines);
 
-      const stdoutLines = [];
-      this._readOutput(stdoutStream, stdoutLines);
+        const stderrStream = new Gio.DataInputStream({
+          base_stream: new Gio.UnixInputStream({
+            fd: stderr,
+            close_fd: true,
+          }),
+          close_base_stream: true,
+        });
 
-      const stderrStream = new Gio.DataInputStream({
-        base_stream: new Gio.UnixInputStream({
-          fd: stderr,
-          close_fd: true,
-        }),
-        close_base_stream: true,
-      });
+        const stderrLines = [];
+        this._readOutput(stderrStream, stderrLines);
 
-      const stderrLines = [];
-      this._readOutput(stderrStream, stderrLines);
+        GLib.child_watch_add(
+          GLib.PRIORITY_DEFAULT_IDLE,
+          pid,
+          (currentPid, status) => {
+            if (status === 0) {
+              resolve(stdoutLines.join('\n'));
+            } else {
+              logError(new Error(stderrLines.join('\n')));
+            }
 
-      GLib.child_watch_add(
-        GLib.PRIORITY_DEFAULT_IDLE,
-        pid,
-        (currentPid, status) => {
-          if (status === 0) {
-            callback(stdoutLines.join('\n'));
-          } else {
-            logError(new Error(stderrLines.join('\n')));
+            stdoutStream.close(null);
+            stderrStream.close(null);
+            GLib.spawn_close_pid(currentPid);
           }
-
-          stdoutStream.close(null);
-          stderrStream.close(null);
-          GLib.spawn_close_pid(currentPid);
-        }
-      );
-    } catch (error) {
-      logError(error);
-    }
+        );
+      } catch (error) {
+        logError(error);
+        reject(error);
+      }
+    });
   }
 }
 

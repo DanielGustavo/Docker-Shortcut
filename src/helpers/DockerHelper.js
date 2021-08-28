@@ -11,15 +11,16 @@ class DockerHelper {
   constructor() {
     this.customCommands = {};
 
-    const setCustomCommands = (fileContent) => {
-      const customCommands = JSON.parse(fileContent);
-      this.customCommands = customCommands;
-    };
+    this.loadCustomCommands();
+  }
 
-    file.read(
-      '~/.dockerIntegrationCustomShellCommandsToContainers.json',
-      setCustomCommands
+  async loadCustomCommands() {
+    const customCommandsInStringfiedJSON = await file.read(
+      '~/.dockerIntegrationCustomShellCommandsToContainers.json'
     );
+
+    const customCommands = JSON.parse(customCommandsInStringfiedJSON);
+    this.customCommands = customCommands;
   }
 
   getCustomCommandFromContainer(containerId) {
@@ -35,34 +36,33 @@ class DockerHelper {
     );
   }
 
-  loadContainers() {
+  async loadContainers() {
+    const output = await shell.execAsync(
+      "docker ps -a --format '{{.ID}},{{.Names}},{{.Status}}'"
+    );
+
     return new Promise((resolve) => {
-      shell.execAsync(
-        "docker ps -a --format '{{.ID}},{{.Names}},{{.Status}}'",
-        (output) => {
-          const containers = output.trim().split('\n');
+      const containers = output.trim().split('\n');
 
-          const containersDatas = containers.map((container) => {
-            const [id, name, containerFullStatus] = container.split(',');
+      const containersDatas = containers.map((container) => {
+        const [id, name, containerFullStatus] = container.split(',');
 
-            const isPaused =
-              containerFullStatus.toLowerCase().indexOf('paused') > -1;
-            const isUp = containerFullStatus.toLowerCase().indexOf('up') > -1;
+        const isPaused =
+          containerFullStatus.toLowerCase().indexOf('paused') > -1;
+        const isUp = containerFullStatus.toLowerCase().indexOf('up') > -1;
 
-            let containerStatus = 'stopped';
+        let containerStatus = 'stopped';
 
-            if (isPaused) {
-              containerStatus = 'paused';
-            } else if (isUp) {
-              containerStatus = 'started';
-            }
-
-            return { id, name, status: containerStatus };
-          });
-
-          resolve(containersDatas);
+        if (isPaused) {
+          containerStatus = 'paused';
+        } else if (isUp) {
+          containerStatus = 'started';
         }
-      );
+
+        return { id, name, status: containerStatus };
+      });
+
+      resolve(containersDatas);
     });
   }
 
@@ -135,12 +135,14 @@ class DockerHelper {
     notifier.emit('containerChange');
   }
 
-  unpauseContainer(containerId) {
-    shell.execAsync(`docker unpause ${containerId}`, this._notifyChange);
+  async unpauseContainer(containerId) {
+    const output = await shell.execAsync(`docker unpause ${containerId}`);
+    this._notifyChange(output);
   }
 
-  pauseContainer(containerId) {
-    shell.execAsync(`docker pause ${containerId}`, this._notifyChange);
+  async pauseContainer(containerId) {
+    const output = await shell.execAsync(`docker pause ${containerId}`);
+    this._notifyChange(output);
   }
 
   viewContainerLogs(containerId) {
@@ -156,16 +158,19 @@ class DockerHelper {
     );
   }
 
-  stopContainer(containerId) {
-    shell.execAsync(`docker stop ${containerId}`, this._notifyChange);
+  async stopContainer(containerId) {
+    const output = await shell.execAsync(`docker stop ${containerId}`);
+    this._notifyChange(output);
   }
 
-  startContainer(containerId) {
-    shell.execAsync(`docker start ${containerId}`, this._notifyChange);
+  async startContainer(containerId) {
+    const output = await shell.execAsync(`docker start ${containerId}`);
+    this._notifyChange(output);
   }
 
-  removeContainer(containerId) {
-    shell.execAsync(`docker rm ${containerId}`, this._notifyChange);
+  async removeContainer(containerId) {
+    const output = await shell.execAsync(`docker rm ${containerId}`);
+    this._notifyChange(output);
   }
 
   restartContainer(containerId) {

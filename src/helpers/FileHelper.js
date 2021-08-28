@@ -11,8 +11,12 @@ class FileHelper {
     shell.execAsync(`/bin/sh -c "echo '${parsedContent}' > ${filename}"`);
   }
 
-  read(filename, callback) {
-    shell.execAsync(`cat ${filename}`, callback);
+  async read(filename) {
+    const output = await shell.execAsync(`cat ${filename}`);
+
+    return new Promise((resolve) => {
+      resolve(output);
+    });
   }
 }
 
