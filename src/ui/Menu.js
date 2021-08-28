@@ -17,15 +17,16 @@ var Menu = class Menu extends MenuComponent {
     });
   }
 
-  renderMenu() {
-    this.containersGroups = docker.loadContainersGroups();
+  async renderMenu() {
+    this.addText('Loading...');
 
-    if (this.page === 'default') {
+    this.containersGroups = await docker.loadContainersGroups();
+    this.removeElements();
+
+    if (this.page === 'default' || this.page === undefined) {
       this.handleDefaultPage();
     } else if (this.page !== undefined) {
       this.handleContainersGroupPage();
-    } else {
-      this.addText('Loading...');
     }
   }
 
@@ -34,10 +35,10 @@ var Menu = class Menu extends MenuComponent {
     this.refreshMenu();
   }
 
-  handleDefaultPage() {
+  async handleDefaultPage() {
     this.addText('Groups');
 
-    const containersWithoutGroup = docker.loadContainersWithoutGroup();
+    const containersWithoutGroup = await docker.loadContainersWithoutGroup();
     const containersGroupsNames = Object.keys(this.containersGroups);
 
     containersGroupsNames.forEach((groupName) => {
