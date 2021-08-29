@@ -17,7 +17,7 @@ var SubMenu = class SubMenu extends PopupMenu.PopupSubMenuMenuItem {
     positionIndex = 1,
     iconSize = 14,
   }) {
-    this.actor.insert_child_at_index(
+    this.insert_child_at_index(
       new St.Icon({
         icon_name: icon,
         style_class: styleClasses.join(' '),

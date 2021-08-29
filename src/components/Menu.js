@@ -16,13 +16,13 @@ var Menu = class Menu extends PanelMenu.Button {
     const gicon = Gio.icon_new_for_string(`${Me.path}/images/icon.svg`);
     const iconImage = new St.Icon({ gicon, icon_size: '24' });
 
-    this.actor.add_child(iconButton);
-    this.actor.connect('button_press_event', this.refreshMenu.bind(this));
+    this.add_child(iconButton);
+    this.connect('button_press_event', this.refreshMenu.bind(this));
 
     iconButton.add_child(iconImage);
 
     this.renderMenu();
-    this.actor.show();
+    this.show();
   }
 
   refreshMenu() {
@@ -30,7 +30,7 @@ var Menu = class Menu extends PanelMenu.Button {
       this.menu.removeAll();
 
       this.renderMenu();
-      this.actor.show();
+      this.show();
     }
   }
 

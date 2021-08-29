@@ -48,7 +48,7 @@ var BaseMenu = class BaseMenu {
     input.set_text(value);
 
     const menuItem = new PopupMenu.PopupMenuItem('', { reactive: false });
-    menuItem.actor.add(input);
+    menuItem.add(input);
 
     this.addItem(menuItem);
 
