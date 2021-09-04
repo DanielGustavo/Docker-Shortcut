@@ -12,12 +12,15 @@ var BaseMenu = class BaseMenu {
     return text;
   }
 
-  addButton(title = 'Button', onClick = () => {}, styleClasses = []) {
+  addButton(title = 'Button', onClick, styleClasses = []) {
     const button = new PopupMenu.PopupMenuItem(title, {
       style_class: `menu-button ${styleClasses.join(' ')}`,
     });
     this.menu.addMenuItem(button);
-    button.connect('activate', onClick);
+
+    if (typeof onClick === 'function') {
+      button.connect('activate', onClick);
+    }
 
     return button;
   }
@@ -35,7 +38,7 @@ var BaseMenu = class BaseMenu {
     styleClasses = [],
     placeholder = 'Placeholder',
     value,
-    onChange = (inputValue) => {},
+    onChange,
   }) {
     const input = new St.Entry({
       name,
@@ -52,9 +55,11 @@ var BaseMenu = class BaseMenu {
 
     this.addItem(menuItem);
 
-    input.get_clutter_text().connect('text-changed', () => {
-      onChange(input.get_text());
-    });
+    if (typeof onChange === 'function') {
+      input.get_clutter_text().connect('text-changed', () => {
+        onChange(input.get_text());
+      });
+    }
 
     return input;
   }
