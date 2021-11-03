@@ -2,13 +2,10 @@ const { GObject, Gtk } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { PrefsWidget } = Me.imports.src.components.PrefsWidget;
-const { getSettings } = Me.imports.src.utils.getSettings;
 const { docker } = Me.imports.src.helpers.DockerHelper;
 
-const settings = getSettings();
-
 var Prefs = class Prefs extends PrefsWidget {
-  _init() {
+  _init({ settings }) {
     super._init({ uiFilename: '/prefs.glade' });
     this._drawWindow();
 

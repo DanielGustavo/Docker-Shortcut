@@ -1,11 +1,7 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-
 const { shell } = Me.imports.src.helpers.ShellHelper;
 const { notifier } = Me.imports.src.helpers.NotificationHelper;
 const { file } = Me.imports.src.helpers.FileHelper;
-const { getSettings } = Me.imports.src.utils.getSettings;
-
-const settings = getSettings();
 
 class DockerHelper {
   constructor() {
@@ -67,7 +63,9 @@ class DockerHelper {
   }
 
   getContainersPrefixSeparator() {
-    return settings.get_string('containers-prefix-separator') || '_';
+    return this.settings
+      ? this.settings.get_string('containers-prefix-separator') || '_'
+      : '_';
   }
 
   _separateContainersIntoGroups(containers) {

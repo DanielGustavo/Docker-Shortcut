@@ -7,10 +7,11 @@ const { docker } = Me.imports.src.helpers.DockerHelper;
 const { notifier } = Me.imports.src.helpers.NotificationHelper;
 
 var Menu = class Menu extends MenuComponent {
-  _init() {
+  _init({ settings }) {
     super._init();
 
     this.page = 'default';
+    this.settings = settings;
 
     notifier.on('containerChange', () => {
       this.refreshMenu();
@@ -19,6 +20,10 @@ var Menu = class Menu extends MenuComponent {
 
   async renderMenu() {
     this.addText('Loading...');
+
+    if (!docker.settings) {
+      docker.settings = this.settings;
+    }
 
     this.containersGroups = await docker.loadContainersGroups();
     this.removeElements();

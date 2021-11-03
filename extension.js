@@ -1,9 +1,13 @@
+const { getSettings } = imports.misc.extensionUtils;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { Menu } = Me.imports.src.ui.Menu;
 
 class Extension {
   enable() {
-    this.menu = new Menu();
+    const settings = getSettings();
+
+    this.menu = new Menu({ settings });
     this.menu.enable();
   }
 
